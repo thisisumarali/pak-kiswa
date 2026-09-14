@@ -4,17 +4,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  ArrowRight,
-  ShoppingBag,
-  MessageCircle,
   Truck,
   ShieldCheck,
   Award,
-  Sparkles,
-  Eye,
   CheckCircle2,
 } from "lucide-react";
-import { COMPANY_INFO, PRODUCTS } from "../data/products";
 
 const SLIDES = [
   {
@@ -110,16 +104,6 @@ export default function Hero({ onExploreCategory, onOpenQuickView }) {
     return () => clearInterval(timer);
   }, [nextSlide, isPaused]);
 
-  const activeSlideData = SLIDES[currentSlide];
-  const activeProduct = PRODUCTS.find((p) => p.id === activeSlideData.productId);
-
-  const getWhatsAppSlideUrl = () => {
-    const text = encodeURIComponent(
-      `Assalam o Alaikum Pak Kiswa!\nI saw your offer for:\n*${activeSlideData.headline}*\nPrice: Rs. ${activeSlideData.price.toLocaleString()}\nPlease share details for Cash on Delivery ordering.`
-    );
-    return `https://wa.me/${COMPANY_INFO.whatsappRaw}?text=${text}`;
-  };
-
   return (
     <section
       onMouseEnter={() => setIsPaused(true)}
@@ -127,7 +111,7 @@ export default function Hero({ onExploreCategory, onOpenQuickView }) {
       className="relative w-full overflow-hidden bg-[#FAF9F6] border-b border-stone-200"
     >
       {/* Background Image Slider */}
-      <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center">
+      <div className="relative w-full h-[360px] sm:h-[480px] md:h-[540px] lg:h-[620px] flex items-center">
         
         {/* Background Slide Images with smooth Crossfade */}
         {SLIDES.map((slide, index) => {
@@ -135,132 +119,61 @@ export default function Hero({ onExploreCategory, onOpenQuickView }) {
           return (
             <div
               key={slide.id}
-              className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${
+              onClick={() => onExploreCategory(slide.categoryId)}
+              className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out cursor-pointer ${
                 isActive
                   ? "opacity-100 scale-100 z-0"
                   : "opacity-0 scale-105 -z-10 pointer-events-none"
               }`}
+              title={`Explore ${slide.categoryName}`}
             >
               <img
                 src={slide.image}
                 alt={slide.headline}
-                className="w-full h-full object-cover object-center sm:object-right"
+                className="w-full h-full object-cover object-center opacity-80 transition-opacity duration-500"
               />
             </div>
           );
         })}
 
-        {/* Ambient Gradient Overlays for Readability */}
-        <div className="absolute inset-0 bg-white/70 sm:bg-gradient-to-r sm:from-white sm:via-white/90 sm:to-white/20 lg:to-transparent z-1 pointer-events-none" />
-
-        {/* Content Container */}
-        <div className="relative z-10 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-8 sm:py-16 w-full">
-          
-          {/* Mobile Floating Card Wrapper */}
-          <div className="max-w-xl xl:max-w-2xl bg-white/90 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none p-4 sm:p-0 rounded-2xl sm:rounded-none border border-stone-200/70 sm:border-0 shadow-sm sm:shadow-none space-y-3.5 sm:space-y-5">
-            
-            {/* Top Category Tag & Badge */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#0E3E29] text-white shadow-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F4D393] animate-ping" />
-                {activeSlideData.badge}
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-[#8B6B2B] bg-[#FAF3E4] border border-[#EADBBD] px-2 py-0.5 rounded-full">
-                COD Available
-              </span>
-            </div>
-
-            {/* Headline & Subtitle */}
-            <div className="space-y-1.5 sm:space-y-2.5">
-              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-[#0E3E29] leading-tight tracking-tight">
-                {activeSlideData.headline}
-              </h1>
-              <p className="text-xs sm:text-sm md:text-base text-stone-600 leading-relaxed font-normal">
-                {activeSlideData.subhead}
-              </p>
-            </div>
-
-            {/* Price Highlight Badge */}
-            <div className="inline-flex flex-wrap items-baseline gap-2 sm:gap-3 py-1.5 sm:py-2 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-white sm:bg-white/90 border border-stone-200 shadow-2xs">
-              <span className="text-[10px] sm:text-xs font-semibold text-stone-500 uppercase tracking-wider">
-                Factory Price:
-              </span>
-              <span className="text-xl sm:text-2xl font-serif font-bold text-[#0E3E29]">
-                Rs. {activeSlideData.price.toLocaleString()}
-              </span>
-              {activeSlideData.originalPrice && (
-                <span className="text-xs text-stone-400 line-through">
-                  Rs. {activeSlideData.originalPrice.toLocaleString()}
-                </span>
-              )}
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-                Save {Math.round(((activeSlideData.originalPrice - activeSlideData.price) / activeSlideData.originalPrice) * 100)}%
-              </span>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1">
-              <button
-                onClick={() => onExploreCategory(activeSlideData.categoryId)}
-                className="flex-1 sm:flex-initial px-5 sm:px-7 py-2.5 sm:py-3 bg-[#0E3E29] hover:bg-[#092a1c] text-white rounded-full font-semibold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group cursor-pointer whitespace-nowrap"
-              >
-                <span>Shop {activeSlideData.categoryName}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#F4D393] group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              {activeProduct && (
-                <button
-                  onClick={() => onOpenQuickView(activeProduct)}
-                  className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-white hover:bg-stone-50 text-[#0E3E29] border border-stone-300 rounded-full font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                >
-                  <Eye className="w-3.5 h-3.5 text-[#C5A059]" />
-                  <span>Quick View</span>
-                </button>
-              )}
-
-              <a
-                href={getWhatsAppSlideUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-3.5 py-2 sm:py-3 bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#0d6e3c] border border-[#25D366]/40 rounded-full font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-center"
-              >
-                <MessageCircle className="w-4 h-4 text-[#25D366]" />
-                <span>WhatsApp Order</span>
-              </a>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Desktop Prev / Next Chevron Buttons (Hidden on mobile to avoid overlapping content) */}
+        {/* Prev / Next Chevron Buttons */}
         <button
-          onClick={prevSlide}
+          onClick={(e) => {
+            e.stopPropagation();
+            prevSlide();
+          }}
           aria-label="Previous Slide"
-          className="hidden sm:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/85 hover:bg-white text-stone-800 hover:text-[#0E3E29] shadow-md backdrop-blur-xs items-center justify-center transition-all border border-stone-200 cursor-pointer active:scale-95"
+          className="flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/80 hover:bg-white text-stone-800 hover:text-[#0E3E29] shadow-md backdrop-blur-xs items-center justify-center transition-all border border-stone-200 cursor-pointer active:scale-95"
         >
-          <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         <button
-          onClick={nextSlide}
+          onClick={(e) => {
+            e.stopPropagation();
+            nextSlide();
+          }}
           aria-label="Next Slide"
-          className="hidden sm:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/85 hover:bg-white text-stone-800 hover:text-[#0E3E29] shadow-md backdrop-blur-xs items-center justify-center transition-all border border-stone-200 cursor-pointer active:scale-95"
+          className="flex absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/80 hover:bg-white text-stone-800 hover:text-[#0E3E29] shadow-md backdrop-blur-xs items-center justify-center transition-all border border-stone-200 cursor-pointer active:scale-95"
         >
-          <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         {/* Bottom Interactive Thumbnail Cards (Desktop only) */}
-        <div className="hidden md:flex absolute bottom-6 right-8 z-20 items-center gap-2 bg-white/85 backdrop-blur-md p-2 rounded-2xl border border-stone-200/90 shadow-lg">
+        <div className="hidden md:flex absolute bottom-6 right-8 z-20 items-center gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 shadow-md">
           {SLIDES.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
               <button
                 key={slide.id}
-                onClick={() => setCurrentSlide(idx)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(idx);
+                }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
                     ? "bg-[#0E3E29] text-white shadow-xs"
-                    : "text-stone-700 hover:bg-stone-100/80"
+                    : "text-stone-700 hover:bg-stone-100"
                 }`}
               >
                 <img
@@ -275,18 +188,21 @@ export default function Hero({ onExploreCategory, onOpenQuickView }) {
         </div>
 
         {/* Bottom Slide Indicators / Dots */}
-        <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/30 backdrop-blur-xs px-3 py-1.5 rounded-full">
           {SLIDES.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
               <button
                 key={slide.id}
-                onClick={() => setCurrentSlide(idx)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(idx);
+                }}
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`transition-all duration-300 rounded-full cursor-pointer ${
                   isActive
-                    ? "w-7 h-2 bg-[#0E3E29]"
-                    : "w-2 h-2 bg-stone-300 hover:bg-stone-400"
+                    ? "w-7 h-2 bg-white shadow-xs"
+                    : "w-2 h-2 bg-white/50 hover:bg-white/80"
                 }`}
               />
             );
